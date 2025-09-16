@@ -86,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20.0),
                     child: Image.network(
-                      'https://wallpapers.com/images/hd/caption-a-delicious-whopper-from-burger-king-bbv4vqxednwhvpqa.jpg',
+                      'https://static.tildacdn.com/stor6230-3566-4663-a130-343731383637/22354943.png',
                       height: MediaQuery.of(context).size.height * 0.35, // Responsive height
                       fit: BoxFit.contain,
                     ),
@@ -141,7 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 ),
-                // Nutritional Facts Grid - Centered with a maximum width
+                // Nutritional Facts Grid - Centered with a maximum width and added vertical 'CALCULATOR' text
                 Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 500.0), // Limit the maximum width of the facts block
@@ -150,10 +150,12 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Column(
                         children: <Widget>[
                           Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               _buildNutritionalFactItem(_nutritionalFacts[0]),
                               const SizedBox(width: 24), // Spacing between items
                               _buildNutritionalFactItem(_nutritionalFacts[1]),
+                              const SizedBox(width: 24),
                             ],
                           ),
                           const SizedBox(height: 30), // Spacing between rows
@@ -173,17 +175,16 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-          // CALCULATOR text on the right side
-          Positioned(
-            right: -40, // Adjust position to be partially off-screen for visual effect
-            top: MediaQuery.of(context).size.height * 0.6, // Position vertically
+          Container(
+            height: 80,
+            alignment: Alignment.center,
             child: RotatedBox(
-              quarterTurns: 1, // Rotate 90 degrees clockwise
+              quarterTurns: 3, // Повернуть 270 градусов (вертикально вниз)
               child: Text(
                 'CALCULATOR',
                 style: TextStyle(
-                  color: Colors.yellow[700], // Yellowish color
-                  fontSize: 18,
+                  color: Colors.yellow[700],
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 2.0,
                 ),
@@ -226,6 +227,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
         ],
       ),
+      
     );
   }
 }
