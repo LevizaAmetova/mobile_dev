@@ -175,22 +175,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-          Container(
-            height: 80,
-            alignment: Alignment.center,
-            child: RotatedBox(
-              quarterTurns: 3, // Повернуть 270 градусов (вертикально вниз)
-              child: Text(
-                'CALCULATOR',
-                style: TextStyle(
-                  color: Colors.yellow[700],
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2.0,
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );
