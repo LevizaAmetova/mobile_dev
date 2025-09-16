@@ -86,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20.0),
                     child: Image.network(
-                      'https://static.vecteezy.com/system/resources/previews/022/598/687/non_2x/tasty-beef-burger-png.png',
+                      'https://wallpapers.com/images/hd/caption-a-delicious-whopper-from-burger-king-bbv4vqxednwhvpqa.jpg',
                       height: MediaQuery.of(context).size.height * 0.35, // Responsive height
                       fit: BoxFit.contain,
                     ),
@@ -110,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Container(
                         width: 10,
                         height: 10,
-decoration: const BoxDecoration(
+                        decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white70, // White dot for inactive
                         ),
@@ -141,27 +141,32 @@ decoration: const BoxDecoration(
                     ),
                   ),
                 ),
-                // Nutritional Facts Grid
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-                  child: Column(
-                    children: <Widget>[
-                      Row(
+                // Nutritional Facts Grid - Centered with a maximum width
+                Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 500.0), // Limit the maximum width of the facts block
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+                      child: Column(
                         children: <Widget>[
-                          _buildNutritionalFactItem(_nutritionalFacts[0]),
-                          const SizedBox(width: 24), // Spacing between items
-                          _buildNutritionalFactItem(_nutritionalFacts[1]),
+                          Row(
+                            children: <Widget>[
+                              _buildNutritionalFactItem(_nutritionalFacts[0]),
+                              const SizedBox(width: 24), // Spacing between items
+                              _buildNutritionalFactItem(_nutritionalFacts[1]),
+                            ],
+                          ),
+                          const SizedBox(height: 30), // Spacing between rows
+                          Row(
+                            children: <Widget>[
+                              _buildNutritionalFactItem(_nutritionalFacts[2]),
+                              const SizedBox(width: 24), // Spacing between items
+                              _buildNutritionalFactItem(_nutritionalFacts[3]),
+                            ],
+                          ),
                         ],
                       ),
-                      const SizedBox(height: 30), // Spacing between rows
-                      Row(
-                        children: <Widget>[
-                          _buildNutritionalFactItem(_nutritionalFacts[2]),
-                          const SizedBox(width: 24), // Spacing between items
-                          _buildNutritionalFactItem(_nutritionalFacts[3]),
-                        ],
-                      ),
-                    ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 50), // Extra space at bottom
@@ -194,7 +199,7 @@ decoration: const BoxDecoration(
   Widget _buildNutritionalFactItem(NutritionalFact fact) {
     return Expanded(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center, // Centering the content within each fact item
         children: <Widget>[
           Text(
             fact.value,
