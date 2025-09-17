@@ -6,7 +6,11 @@ class NutritionalFact {
   final String label;
   final String? subLabel; // For %DV
 
-  const NutritionalFact({required this.value, required this.label, this.subLabel});
+  const NutritionalFact({
+    required this.value,
+    required this.label,
+    this.subLabel,
+  });
 }
 
 void main() {
@@ -21,15 +25,16 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Big Mac Nutrition',
       theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFF2C6C2F), // Dark green background
+        scaffoldBackgroundColor: const Color(
+          0xFF2C6C2F,
+        ), // Dark green background
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF2C6C2F), // Dark green
           elevation: 0,
         ),
-        textTheme: Theme.of(context).textTheme.apply(
-          bodyColor: Colors.white,
-          displayColor: Colors.white,
-        ),
+        textTheme: Theme.of(
+          context,
+        ).textTheme.apply(bodyColor: Colors.white, displayColor: Colors.white),
         useMaterial3: true,
       ),
       home: const MyHomePage(),
@@ -47,8 +52,16 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final List<NutritionalFact> _nutritionalFacts = <NutritionalFact>[
     const NutritionalFact(value: '550 CAL.', label: 'Calories'),
-    const NutritionalFact(value: '30G', label: 'Total Fat', subLabel: '(38% DV)'),
-    const NutritionalFact(value: '45G', label: 'Total Carbs', subLabel: '(16% DV)'),
+    const NutritionalFact(
+      value: '30G',
+      label: 'Total Fat',
+      subLabel: '(38% DV)',
+    ),
+    const NutritionalFact(
+      value: '45G',
+      label: 'Total Carbs',
+      subLabel: '(16% DV)',
+    ),
     const NutritionalFact(value: '25G', label: 'Protein'),
   ];
 
@@ -57,17 +70,27 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          SingleChildScrollView( // Use SingleChildScrollView to prevent overflow on small screens
+          SingleChildScrollView(
+            // Use SingleChildScrollView to prevent overflow on small screens
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 // Top Bar
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16.0, 40.0, 16.0, 16.0), // More padding at top for status bar
+                  padding: const EdgeInsets.fromLTRB(
+                    16.0,
+                    40.0,
+                    16.0,
+                    16.0,
+                  ), // More padding at top for status bar
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      const Icon(Icons.fastfood, color: Colors.amber, size: 30), // McDonald's M-like icon
+                      const Icon(
+                        Icons.fastfood,
+                        color: Colors.amber,
+                        size: 30,
+                      ), // McDonald's M-like icon
                       const Text(
                         'Big Mac',
                         style: TextStyle(
@@ -77,7 +100,11 @@ class _MyHomePageState extends State<MyHomePage> {
                           letterSpacing: 1.2,
                         ),
                       ),
-                      const Icon(Icons.menu, color: Colors.white, size: 30), // Menu icon
+                      const Icon(
+                        Icons.menu,
+                        color: Colors.white,
+                        size: 30,
+                      ), // Menu icon
                     ],
                   ),
                 ),
@@ -87,7 +114,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     padding: const EdgeInsets.symmetric(vertical: 20.0),
                     child: Image.network(
                       'https://wallpapers.com/images/hd/caption-a-delicious-whopper-from-burger-king-bbv4vqxednwhvpqa.jpg',
-                      height: MediaQuery.of(context).size.height * 0.35, // Responsive height
+                      height:
+                          MediaQuery.of(context).size.height *
+                          0.35, // Responsive height
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -120,7 +149,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         width: 12,
                         height: 12,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(2), // Small square
+                          borderRadius: BorderRadius.circular(
+                            2,
+                          ), // Small square
                           color: Colors.white70,
                         ),
                       ),
@@ -129,7 +160,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 // Nutritional Information Header
                 const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
+                  padding: EdgeInsets.symmetric(
+                    vertical: 20.0,
+                    horizontal: 16.0,
+                  ),
                   child: Text(
                     'NUTRITIONAL INFORMATION',
                     textAlign: TextAlign.center,
@@ -144,15 +178,22 @@ class _MyHomePageState extends State<MyHomePage> {
                 // Nutritional Facts Grid - Centered with a maximum width
                 Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 500.0), // Limit the maximum width of the facts block
+                    constraints: const BoxConstraints(
+                      maxWidth: 500.0,
+                    ), // Limit the maximum width of the facts block
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0,
+                        vertical: 8.0,
+                      ),
                       child: Column(
                         children: <Widget>[
                           Row(
                             children: <Widget>[
                               _buildNutritionalFactItem(_nutritionalFacts[0]),
-                              const SizedBox(width: 24), // Spacing between items
+                              const SizedBox(
+                                width: 24,
+                              ), // Spacing between items
                               _buildNutritionalFactItem(_nutritionalFacts[1]),
                             ],
                           ),
@@ -160,7 +201,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           Row(
                             children: <Widget>[
                               _buildNutritionalFactItem(_nutritionalFacts[2]),
-                              const SizedBox(width: 24), // Spacing between items
+                              const SizedBox(
+                                width: 24,
+                              ), // Spacing between items
                               _buildNutritionalFactItem(_nutritionalFacts[3]),
                             ],
                           ),
@@ -175,8 +218,10 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           // CALCULATOR text on the right side
           Positioned(
-            right: -40, // Adjust position to be partially off-screen for visual effect
-            top: MediaQuery.of(context).size.height * 0.6, // Position vertically
+            right:
+                -40, // Adjust position to be partially off-screen for visual effect
+            top:
+                MediaQuery.of(context).size.height * 0.6, // Position vertically
             child: RotatedBox(
               quarterTurns: 1, // Rotate 90 degrees clockwise
               child: Text(
@@ -199,7 +244,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _buildNutritionalFactItem(NutritionalFact fact) {
     return Expanded(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center, // Centering the content within each fact item
+        crossAxisAlignment: CrossAxisAlignment
+            .center, // Centering the content within each fact item
         children: <Widget>[
           Text(
             fact.value,
@@ -211,18 +257,12 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Text(
             fact.label,
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 14,
-            ),
+            style: const TextStyle(color: Colors.white70, fontSize: 14),
           ),
           if (fact.subLabel != null)
             Text(
               fact.subLabel!,
-              style: const TextStyle(
-                color: Colors.white54,
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: Colors.white54, fontSize: 12),
             ),
         ],
       ),
