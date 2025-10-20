@@ -20,7 +20,7 @@ class MainApp extends StatelessWidget {
                   child: CircleAvatar(
                     radius: 50,
                     backgroundImage: NetworkImage(
-                      'https://picsum.photos/200',
+                      'https://picsum.photos/200'
                     ),
                   ),
                 ),
