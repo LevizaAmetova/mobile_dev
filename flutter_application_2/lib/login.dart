@@ -85,6 +85,9 @@ class _LoginState extends State<Login> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _isLoading ? null : _signIn,
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 50),
+              ),
               child: _isLoading 
                   ? const SizedBox(
                       height: 20,
@@ -92,9 +95,6 @@ class _LoginState extends State<Login> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Text('Войти', style: TextStyle(fontSize: 18)),
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
-              ),
             ),
             const SizedBox(height: 15),
             TextButton(

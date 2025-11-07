@@ -106,6 +106,9 @@ class _RegisterState extends State<Register> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _isLoading ? null : _signUp,
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 50),
+              ),
               child: _isLoading 
                   ? const SizedBox(
                       height: 20,
@@ -113,9 +116,6 @@ class _RegisterState extends State<Register> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Text('Зарегистрироваться', style: TextStyle(fontSize: 18)),
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
-              ),
             ),
             const SizedBox(height: 15),
             TextButton(
