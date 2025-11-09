@@ -1,33 +1,29 @@
 import 'package:flutter/material.dart';
-import 'second.dart';
 
-class Main extends StatelessWidget {
-  const Main({super.key});
+class Third extends StatelessWidget {
+  const Third({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Главный экран'),
-        backgroundColor: Colors.blue,
+        title: const Text('Третий экран'),
+        backgroundColor: Colors.orange,
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              'Главный экран',
+              'Третий экран',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const Second()),
-                );
+                Navigator.pop(context);
               },
-              child: const Text('Перейти на второй экран'),
+              child: const Text('Вернуться назад'),
             ),
           ],
         ),
