@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'third.dart';
 
 class Second extends StatelessWidget {
@@ -19,7 +20,9 @@ class Second extends StatelessWidget {
               'Второй экран',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
+            
+            // Навигация на третий экран
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -27,14 +30,40 @@ class Second extends StatelessWidget {
                   MaterialPageRoute(builder: (_) => const Third()),
                 );
               },
-              child: const Text('Перейти на третий экран'),
+              child: const Text('На третий экран (базовая)'),
             ),
             const SizedBox(height: 10),
+            
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/third');
+              },
+              child: const Text('На третий экран (named)'),
+            ),
+            const SizedBox(height: 10),
+            
+            ElevatedButton(
+              onPressed: () {
+                context.push('/third');
+              },
+              child: const Text('На третий экран (GoRouter)'),
+            ),
+            const SizedBox(height: 20),
+            
+            // Возврат назад
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('Вернуться назад'),
+              child: const Text('Назад (базовая)'),
+            ),
+            const SizedBox(height: 10),
+            
+            ElevatedButton(
+              onPressed: () {
+                context.pop();
+              },
+              child: const Text('Назад (GoRouter)'),
             ),
           ],
         ),
