@@ -8,7 +8,7 @@ class AuthService {
     try {
       final user = _supabase.auth.currentUser;
       if (user == null) {
-        print('❌ Пользователь не авторизован');
+        print('Пользователь не авторизован');
         return null;
       }
 
@@ -18,10 +18,10 @@ class AuthService {
           .eq('email', user.email!)
           .single();
 
-      print('✅ Данные пользователя получены: $response');
+      print('Данные пользователя получены: $response');
       return response;
     } catch (e) {
-      print('❌ Ошибка получения данных пользователя: $e');
+      print('Ошибка получения данных пользователя: $e');
       return null;
     }
   }
@@ -38,7 +38,7 @@ class AuthService {
     try {
       final user = _supabase.auth.currentUser;
       if (user == null) {
-        print('❌ Пользователь не авторизован');
+        print('Пользователь не авторизован');
         return false;
       }
 
@@ -56,10 +56,10 @@ class AuthService {
         'is_active': 1,
       });
 
-      print('✅ Данные пользователя созданы: $response');
+      print('Данные пользователя созданы: $response');
       return true;
     } catch (e) {
-      print('❌ Ошибка создания данных пользователя: $e');
+      print('Ошибка создания данных пользователя: $e');
       return false;
     }
   }
@@ -75,7 +75,7 @@ class AuthService {
     try {
       final user = _supabase.auth.currentUser;
       if (user == null) {
-        print('❌ Пользователь не авторизован');
+        print('Пользователь не авторизован');
         return false;
       }
 
@@ -98,10 +98,10 @@ class AuthService {
           .update(updateData)
           .eq('email', user.email!);
 
-      print('✅ Данные пользователя обновлены: $response');
+      print('Данные пользователя обновлены: $response');
       return true;
     } catch (e) {
-      print('❌ Ошибка обновления данных пользователя: $e');
+      print('Ошибка обновления данных пользователя: $e');
       return false;
     }
   }
@@ -111,7 +111,7 @@ class AuthService {
     try {
       final user = _supabase.auth.currentUser;
       if (user == null) {
-        print('❌ Пользователь не авторизован');
+        print('Пользователь не авторизован');
         return false;
       }
 
@@ -120,10 +120,10 @@ class AuthService {
           .delete()
           .eq('email', user.email!);
 
-      print('✅ Данные пользователя удалены: $response');
+      print('Данные пользователя удалены: $response');
       return true;
     } catch (e) {
-      print('❌ Ошибка удаления данных пользователя: $e');
+      print('Ошибка удаления данных пользователя: $e');
       return false;
     }
   }
@@ -137,10 +137,10 @@ class AuthService {
           .order('created_at', ascending: false)
           .limit(limit);
 
-      print('✅ Получено пользователей: ${response.length}');
+      print('Получено пользователей: ${response.length}');
       return response;
     } catch (e) {
-      print('❌ Ошибка получения списка пользователей: $e');
+      print('Ошибка получения списка пользователей: $e');
       return [];
     }
   }
@@ -156,7 +156,7 @@ class AuthService {
     try {
       final user = _supabase.auth.currentUser;
       if (user == null) {
-        print('❌ Пользователь не авторизован');
+        print('Пользователь не авторизован');
         return false;
       }
 
@@ -173,7 +173,7 @@ class AuthService {
       }
 
       if (updateData.isEmpty) {
-        print('⚠️ Нет данных для обновления');
+        print('Нет данных для обновления');
         return false;
       }
 
@@ -182,10 +182,10 @@ class AuthService {
           .update(updateData)
           .eq('email', user.email!);
 
-      print('✅ Данные пользователя обновлены: $response');
+      print('Данные пользователя обновлены: $response');
       return true;
     } catch (e) {
-      print('❌ Ошибка обновления данных пользователя: $e');
+      print('Ошибка обновления данных пользователя: $e');
       return false;
     }
   }
@@ -206,10 +206,10 @@ class AuthService {
           .eq('id', userId)
           .single();
 
-      print('✅ Данные пользователя по ID получены: $response');
+      print('Данные пользователя по ID получены: $response');
       return response;
     } catch (e) {
-      print('❌ Ошибка получения данных пользователя по ID: $e');
+      print('Ошибка получения данных пользователя по ID: $e');
       return null;
     }
   }
@@ -222,10 +222,10 @@ class AuthService {
           .select()
           .eq('email', email);
 
-      print('✅ Проверка существования пользователя: ${response.isNotEmpty}');
+      print('Проверка существования пользователя: ${response.isNotEmpty}');
       return response.isNotEmpty;
     } catch (e) {
-      print('❌ Ошибка проверки существования пользователя: $e');
+      print('Ошибка проверки существования пользователя: $e');
       return false;
     }
   }

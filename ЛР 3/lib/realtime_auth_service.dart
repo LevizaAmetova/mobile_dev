@@ -1,5 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'dart:async'; // Добавляем для StreamController
+import 'dart:async';
 
 class RealtimeAuthService {
   final SupabaseClient _supabase = Supabase.instance.client;
@@ -42,32 +42,32 @@ class RealtimeAuthService {
   }
 
   // Обработка realtime обновлений
-  void _handleRealtimeUpdate(PostgresChangePayload payload) {
-    print('Realtime событие: ${payload.eventType}');
-    
-    switch (payload.eventType) {
-      case 'INSERT':
-      case 'UPDATE':
-        final newRecord = payload.newRecord;
-        if (newRecord != null) {
-          print('Новые данные: $newRecord');
-          _streamController.add(Map<String, dynamic>.from(newRecord));
-        }
-        break;
-      case 'DELETE':
-        print('Данные удалены');
-        _streamController.add(null);
-        break;
-      default:
-        print('Неизвестное событие: ${payload.eventType}');
-    }
+void _handleRealtimeUpdate(PostgresChangePayload payload) {
+  print('Realtime событие: ${payload.eventType}');
+  
+  final eventType = payload.eventType;
+  
+  // Используем константы PostgresChangeEvent для сравнения
+  if (eventType == PostgresChangeEvent.insert || eventType == PostgresChangeEvent.update) {
+    final newRecord = payload.newRecord;
+    // Убрана ненужная проверка на null, так как newRecord не может быть null для INSERT/UPDATE
+    print('Новые данные: $newRecord');
+    _streamController.add(Map<String, dynamic>.from(newRecord));
+  } else if (eventType == PostgresChangeEvent.delete) {
+    print('Данные удалены');
+    _streamController.add(null);
+  } else {
+    print('Неизвестное событие: $eventType');
   }
+}
 
   // Загрузка начальных данных
   void _loadInitialData() async {
     try {
       final userData = await getCurrentUserData();
-      _streamController.add(userData);
+      if (userData != null) {
+        _streamController.add(userData);
+      }
     } catch (e) {
       print('Ошибка загрузки начальных данных: $e');
       _streamController.addError(e);
