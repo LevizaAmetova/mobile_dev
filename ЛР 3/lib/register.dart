@@ -16,10 +16,21 @@ class _RegisterState extends State<Register> {
   bool _isLoading = false;
 
   Future<void> _signUp() async {
+    // Валидация паролей
     if (_passwordController.text != _confirmPasswordController.text) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Пароли не совпадают')),
+        );
+      }
+      return;
+    }
+
+    // Проверка минимальной длины пароля
+    if (_passwordController.text.length < 6) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Пароль должен содержать минимум 6 символов')),
         );
       }
       return;
@@ -30,9 +41,13 @@ class _RegisterState extends State<Register> {
         _isLoading = true;
       });
 
-      final response = await _supabase.auth.signUp(
+      final AuthResponse response = await _supabase.auth.signUp(
         email: _emailController.text.trim(),
         password: _passwordController.text,
+        // Дополнительные данные пользователя (опционально)
+        data: {
+          'created_at': DateTime.now().toIso8601String(),
+        },
       );
 
       if (response.user != null) {
@@ -40,8 +55,26 @@ class _RegisterState extends State<Register> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Регистрация успешна! Проверьте email для подтверждения.')),
           );
-          Navigator.pop(context);
+          print('User ID: ${response.user!.id}');
+          print('Email: ${response.user!.email}');
+          print('Session: ${response.session}');
         }
+        
+        // Переход на главный экран или экран подтверждения
+        Navigator.pop(context);
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Ошибка регистрации')),
+          );
+        }
+      }
+    } on AuthException catch (e) {
+      // Обработка специфических ошибок аутентификации
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Ошибка аутентификации: ${e.message}')),
+        );
       }
     } catch (e) {
       if (mounted) {
