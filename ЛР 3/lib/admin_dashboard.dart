@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'auth_service.dart';
-import 'users_list.dart';
-import 'user_profile.dart';
+import 'package:flutter_application_2/auth_service.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
