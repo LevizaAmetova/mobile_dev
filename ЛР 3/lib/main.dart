@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'login.dart';
 import 'register.dart';
-import 'admin_dashboard.dart';
-import 'user_profile.dart';
-import 'users_list.dart';
+import 'user_profile.dart'; // Добавьте импорт страницы профиля
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,9 +30,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => const Login(),
         '/register': (context) => const Register(),
-        '/admin_dashboard': (context) => const AdminDashboard(),
-        '/user_profile': (context) => const UserProfile(),
-        '/users_list': (context) => const UsersList(),
+        '/profile': (context) => const UserProfile(), // Добавьте маршрут профиля
       },
     );
   }
@@ -49,7 +45,7 @@ class AuthWrapper extends StatefulWidget {
 
 class _AuthWrapperState extends State<AuthWrapper> {
   final _supabase = Supabase.instance.client;
-  User? _user;
+  User? user;
   bool _isLoading = true;
 
   @override
@@ -61,36 +57,17 @@ class _AuthWrapperState extends State<AuthWrapper> {
     _supabase.auth.onAuthStateChange.listen((AuthState data) {
       final session = data.session;
       setState(() {
-        _user = session?.user;
+        user = session?.user;
         _isLoading = false;
       });
-      
-      if (session != null) {
-        _redirectToDashboard();
-      }
     });
   }
 
   void _getAuthState() async {
     final currentUser = _supabase.auth.currentUser;
     setState(() {
-      _user = currentUser;
+      user = currentUser;
       _isLoading = false;
-    });
-    
-    if (currentUser != null) {
-      _redirectToDashboard();
-    }
-  }
-
-  void _redirectToDashboard() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const AdminDashboard()),
-        );
-      }
     });
   }
 
@@ -103,7 +80,13 @@ class _AuthWrapperState extends State<AuthWrapper> {
         ),
       );
     }
-    
-    return _user == null ? const Login() : const AdminDashboard();
+
+    // Возвращаем соответствующую страницу в зависимости от состояния аутентификации
+    if (user == null) {
+      return const Login(); // или Register(), в зависимости от вашей логики
+    } else {
+      // Пользователь авторизован - показываем главную страницу или профиль
+      return const UserProfile(); // или ваша главная страница
+    }
   }
 }

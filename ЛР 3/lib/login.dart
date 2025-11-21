@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'admin_dashboard.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -30,12 +29,6 @@ class _LoginState extends State<Login> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Успешный вход!')),
-          );
-          
-          // Принудительное перенаправление
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const AdminDashboard()),
           );
         }
       }

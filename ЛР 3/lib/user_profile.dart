@@ -58,6 +58,7 @@ class _UserProfileState extends State<UserProfile> {
           _isLoading = true;
         });
 
+        // Используем существующий метод updateUserData
         final success = await _authService.updateUserData(
           username: _usernameController.text,
           firstName: _firstNameController.text,
