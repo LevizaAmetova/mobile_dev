@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'login.dart';
 import 'register.dart';
-import 'user_profile.dart'; // Добавьте импорт страницы профиля
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +29,6 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => const Login(),
         '/register': (context) => const Register(),
-        '/profile': (context) => const UserProfile(), // Добавьте маршрут профиля
       },
     );
   }
@@ -83,10 +81,38 @@ class _AuthWrapperState extends State<AuthWrapper> {
 
     // Возвращаем соответствующую страницу в зависимости от состояния аутентификации
     if (user == null) {
-      return const Login(); // или Register(), в зависимости от вашей логики
+      return const Login();
     } else {
-      // Пользователь авторизован - показываем главную страницу или профиль
-      return const UserProfile(); // или ваша главная страница
+      // Пользователь авторизован - показываем главную страницу приложения
+      // Замените на вашу основную страницу приложения
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Главная страница'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Добро пожаловать!',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Вы вошли как: ${user?.email ?? 'Пользователь'}',
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: () {
+                  _supabase.auth.signOut();
+                },
+                child: const Text('Выйти'),
+              ),
+            ],
+          ),
+        ),
+      );
     }
   }
 }
