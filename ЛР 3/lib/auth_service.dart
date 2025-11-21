@@ -13,7 +13,7 @@ class AuthService {
       }
 
       final response = await _supabase
-          .from('Авторизация / Регистрация')
+          .from('user_profiles')
           .select()
           .eq('email', user.email!)
           .single();
@@ -42,17 +42,16 @@ class AuthService {
         return false;
       }
 
-      // Преобразуем phoneNumber в int, если это число
       final phoneNumberInt = int.tryParse(phoneNumber) ?? 0;
 
-      final response = await _supabase.from('Авторизация / Регистрация').insert({
+      final response = await _supabase.from('user_profiles').insert({
+        'id': user.id, // Используем ID из auth
         'email': email,
         'username': username,
         'first_name': firstName,
         'last_name': lastName,
         'date_of_birth': dateOfBirth,
         'phone_number': phoneNumberInt,
-        'created_at': DateTime.now().toIso8601String(),
         'is_active': 1,
       });
 
@@ -79,22 +78,24 @@ class AuthService {
         return false;
       }
 
-      Map<String, dynamic> updateData = {};
+      final updateData = <String, dynamic>{};
       
-      // Явно преобразуем nullable String в Object
-      if (username != null) updateData['username'] = username as Object;
-      if (firstName != null) updateData['first_name'] = firstName as Object;
-      if (lastName != null) updateData['last_name'] = lastName as Object;
-      if (dateOfBirth != null) updateData['date_of_birth'] = dateOfBirth as Object;
+      _addIfNotNull(updateData, 'username', username);
+      _addIfNotNull(updateData, 'first_name', firstName);
+      _addIfNotNull(updateData, 'last_name', lastName);
+      _addIfNotNull(updateData, 'date_of_birth', dateOfBirth);
       
-      // Для phoneNumber преобразуем в int
       if (phoneNumber != null) {
-        final phoneNumberInt = int.tryParse(phoneNumber) ?? 0;
-        updateData['phone_number'] = phoneNumberInt;
+        updateData['phone_number'] = int.tryParse(phoneNumber) ?? 0;
+      }
+
+      if (updateData.isEmpty) {
+        print('Нет данных для обновления');
+        return false;
       }
 
       final response = await _supabase
-          .from('Авторизация / Регистрация')
+          .from('user_profiles')
           .update(updateData)
           .eq('email', user.email!);
 
@@ -116,7 +117,7 @@ class AuthService {
       }
 
       final response = await _supabase
-          .from('Авторизация / Регистрация')
+          .from('user_profiles')
           .delete()
           .eq('email', user.email!);
 
@@ -132,7 +133,7 @@ class AuthService {
   Future<List<Map<String, dynamic>>> getAllUsers({int limit = 10}) async {
     try {
       final response = await _supabase
-          .from('Авторизация / Регистрация')
+          .from('user_profiles')
           .select()
           .order('created_at', ascending: false)
           .limit(limit);
@@ -145,63 +146,11 @@ class AuthService {
     }
   }
 
-  // Альтернативный метод UPDATE с безопасным преобразованием
-  Future<bool> updateUserDataSafe({
-    String? username,
-    String? firstName,
-    String? lastName,
-    String? dateOfBirth,
-    String? phoneNumber,
-  }) async {
-    try {
-      final user = _supabase.auth.currentUser;
-      if (user == null) {
-        print('Пользователь не авторизован');
-        return false;
-      }
-
-      final updateData = <String, dynamic>{};
-      
-      // Безопасное добавление значений
-      _addIfNotNull(updateData, 'username', username);
-      _addIfNotNull(updateData, 'first_name', firstName);
-      _addIfNotNull(updateData, 'last_name', lastName);
-      _addIfNotNull(updateData, 'date_of_birth', dateOfBirth);
-      
-      if (phoneNumber != null) {
-        updateData['phone_number'] = int.tryParse(phoneNumber) ?? 0;
-      }
-
-      if (updateData.isEmpty) {
-        print('Нет данных для обновления');
-        return false;
-      }
-
-      final response = await _supabase
-          .from('Авторизация / Регистрация')
-          .update(updateData)
-          .eq('email', user.email!);
-
-      print('Данные пользователя обновлены: $response');
-      return true;
-    } catch (e) {
-      print('Ошибка обновления данных пользователя: $e');
-      return false;
-    }
-  }
-
-  // Вспомогательный метод для безопасного добавления значений
-  void _addIfNotNull(Map<String, dynamic> map, String key, String? value) {
-    if (value != null && value.isNotEmpty) {
-      map[key] = value;
-    }
-  }
-
   // Получить данные пользователя по ID
   Future<Map<String, dynamic>?> getUserDataById(String userId) async {
     try {
       final response = await _supabase
-          .from('Авторизация / Регистрация')
+          .from('user_profiles')
           .select()
           .eq('id', userId)
           .single();
@@ -218,7 +167,7 @@ class AuthService {
   Future<bool> checkUserExists(String email) async {
     try {
       final response = await _supabase
-          .from('Авторизация / Регистрация')
+          .from('user_profiles')
           .select()
           .eq('email', email);
 
@@ -228,5 +177,52 @@ class AuthService {
       print('Ошибка проверки существования пользователя: $e');
       return false;
     }
+  }
+
+  // Создать профиль при регистрации
+  Future<bool> createProfileAfterSignUp(User user, {
+    String username = '',
+    String firstName = '',
+    String lastName = '',
+    String dateOfBirth = '',
+    String phoneNumber = '',
+  }) async {
+    try {
+      final phoneNumberInt = int.tryParse(phoneNumber) ?? 0;
+
+      final response = await _supabase.from('user_profiles').insert({
+        'id': user.id,
+        'email': user.email!,
+        'username': username.isNotEmpty ? username : user.email!.split('@').first,
+        'first_name': firstName,
+        'last_name': lastName,
+        'date_of_birth': dateOfBirth,
+        'phone_number': phoneNumberInt,
+        'is_active': 1,
+      });
+
+      print('Профиль создан после регистрации: $response');
+      return true;
+    } catch (e) {
+      print('Ошибка создания профиля после регистрации: $e');
+      return false;
+    }
+  }
+
+  // Вспомогательный метод для безопасного добавления значений
+  void _addIfNotNull(Map<String, dynamic> map, String key, String? value) {
+    if (value != null && value.isNotEmpty) {
+      map[key] = value;
+    }
+  }
+
+  // Проверить статус авторизации
+  bool isUserLoggedIn() {
+    return _supabase.auth.currentUser != null;
+  }
+
+  // Получить текущего пользователя
+  User? getCurrentUser() {
+    return _supabase.auth.currentUser;
   }
 }

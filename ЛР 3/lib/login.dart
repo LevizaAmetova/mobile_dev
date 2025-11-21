@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'admin_dashboard.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -20,17 +21,29 @@ class _LoginState extends State<Login> {
         _isLoading = true;
       });
 
-      final response = await _supabase.auth.signInWithPassword(
+      final AuthResponse response = await _supabase.auth.signInWithPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
 
-      if (response.user != null) {
+      if (response.user != null && response.session != null) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Успешный вход!')),
           );
+          
+          // Принудительное перенаправление
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const AdminDashboard()),
+          );
         }
+      }
+    } on AuthException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Ошибка аутентификации: ${e.message}')),
+        );
       }
     } catch (e) {
       if (mounted) {
