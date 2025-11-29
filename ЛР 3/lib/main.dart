@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:record/record.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 import 'login.dart';
 import 'register.dart';
 
@@ -95,15 +98,23 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   final _supabase = Supabase.instance.client;
+  final _audioRecorder = AudioRecorder();
   String _recognizedText = '';
   bool _isRecording = false;
   bool _isProcessing = false;
   List<Map<String, dynamic>> _savedRecords = [];
+  String? _currentRecordingPath;
 
   @override
   void initState() {
     super.initState();
     _loadSavedRecords();
+  }
+
+  @override
+  void dispose() {
+    _audioRecorder.dispose();
+    super.dispose();
   }
 
   // Загрузка сохраненных записей
@@ -131,61 +142,127 @@ class _MainPageState extends State<MainPage> {
 
   // Функция для начала записи
   void _startRecording() async {
-    setState(() {
-      _isRecording = true;
-      _recognizedText = '';
-    });
-    
-    // TODO: Реальная логика записи аудио
-    // Для примера используем имитацию
+    try {
+      // Проверяем разрешение на запись
+      if (await _audioRecorder.hasPermission()) {
+        // Получаем директорию для сохранения файлов
+        final directory = await getApplicationDocumentsDirectory();
+        final timestamp = DateTime.now().millisecondsSinceEpoch;
+        final filePath = '${directory.path}/recording_$timestamp.m4a';
+        
+        // Начинаем запись
+        await _audioRecorder.start(
+          const RecordConfig(),
+          path: filePath,
+        );
+        
+        setState(() {
+          _isRecording = true;
+          _recognizedText = '';
+          _currentRecordingPath = filePath;
+        });
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Необходимо разрешение на запись аудио')),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Ошибка начала записи: $e')),
+        );
+        setState(() {
+          _isRecording = false;
+        });
+      }
+    }
   }
 
   // Функция для остановки записи и расшифровки
   void _stopRecordingAndRecognize() async {
-    setState(() {
-      _isRecording = false;
-      _isProcessing = true;
-    });
-
     try {
-      // Имитация распознавания речи
-      await Future.delayed(const Duration(seconds: 2));
-      
-      // Пример распознанного текста
-      final sampleTexts = [
-        'Это пример распознанного текста из аудиозаписи. Здесь будет отображаться текст, полученный в результате расшифровки вашей записи.',
-        'Сегодня прекрасная погода для прогулки в парке. Солнце светит ярко, птицы поют свои песни.',
-        'Технологии искусственного интеллекта стремительно развиваются и меняют нашу жизнь.',
-        'Для успешного выполнения задачи необходимо тщательное планирование и последовательное выполнение этапов.'
-      ];
-      
-      final randomText = sampleTexts[DateTime.now().millisecondsSinceEpoch % sampleTexts.length];
+      // Останавливаем запись и получаем путь к файлу
+      final path = await _audioRecorder.stop();
       
       setState(() {
-        _recognizedText = randomText;
-        _isProcessing = false;
+        _isRecording = false;
+        _isProcessing = true;
       });
-      
+
+      if (path != null && path.isNotEmpty) {
+        // Проверяем, что файл существует
+        final file = File(path);
+        if (await file.exists()) {
+          final fileSize = await file.length();
+          
+          // Имитация распознавания речи (здесь можно добавить реальное распознавание)
+          await Future.delayed(const Duration(seconds: 2));
+          
+          // Пример распознанного текста
+          final sampleTexts = [
+            'Это пример распознанного текста из аудиозаписи. Файл сохранен: ${file.path}',
+            'Сегодня прекрасная погода для прогулки в парке. Солнце светит ярко, птицы поют свои песни. Размер файла: ${(fileSize / 1024).toStringAsFixed(2)} KB',
+            'Технологии искусственного интеллекта стремительно развиваются и меняют нашу жизнь. Запись сохранена успешно.',
+            'Для успешного выполнения задачи необходимо тщательное планирование и последовательное выполнение этапов. Аудио файл готов.'
+          ];
+          
+          final randomText = sampleTexts[DateTime.now().millisecondsSinceEpoch % sampleTexts.length];
+          
+          setState(() {
+            _recognizedText = randomText;
+            _isProcessing = false;
+            _currentRecordingPath = path;
+          });
+        } else {
+          throw Exception('Файл записи не найден');
+        }
+      } else {
+        throw Exception('Не удалось получить путь к файлу записи');
+      }
     } catch (e) {
       setState(() {
-        _recognizedText = 'Ошибка при распознавании: $e';
+        _recognizedText = 'Ошибка при остановке записи: $e';
         _isProcessing = false;
+        _isRecording = false;
       });
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Ошибка: $e')),
+        );
+      }
     }
   }
 
-  // Сохранение распознанного текста
+  // Сохранение распознанного текста и файла
   Future<void> _saveRecord() async {
-    if (_recognizedText.isEmpty) return;
+    if (_recognizedText.isEmpty || _currentRecordingPath == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Нет данных для сохранения')),
+        );
+      }
+      return;
+    }
 
     try {
       setState(() {
         _isProcessing = true;
       });
 
+      // Проверяем, что файл существует
+      final file = File(_currentRecordingPath!);
+      if (!await file.exists()) {
+        throw Exception('Аудио файл не найден');
+      }
+
+      // Сохраняем информацию о записи в базу данных
       final record = {
         'user_id': _supabase.auth.currentUser!.id,
         'text': _recognizedText,
+        'file_path': _currentRecordingPath,
         'created_at': DateTime.now().toIso8601String(),
       };
 
@@ -197,15 +274,19 @@ class _MainPageState extends State<MainPage> {
       if (response.isNotEmpty) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Запись успешно сохранена!')),
+            SnackBar(
+              content: Text('Запись успешно сохранена! Файл: ${file.path}'),
+              duration: const Duration(seconds: 3),
+            ),
           );
           
           // Обновляем список записей
           await _loadSavedRecords();
           
-          // Очищаем текущий текст
+          // Очищаем текущий текст и путь
           setState(() {
             _recognizedText = '';
+            _currentRecordingPath = null;
           });
         }
       }
